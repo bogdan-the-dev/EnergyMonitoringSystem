@@ -1,0 +1,53 @@
+<div class="card-content">
+  <div class="row">
+    <div class="col-md-12">
+      <br />
+      <div class="col-md-10 offset-md-1">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <label class="form-label" for="username">Username</label>
+            <div class="form-floating">
+              <input type="text" id="username" formControlName="username" class="form-control" autocomplete="username" />
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div>
+              <label class="form-label" for="email">Email</label>
+            </div>
+            <div class="form-floating" style="border-radius: 5px;">
+              <input type="text" id="email" formControlName="email" class="form-control" autocomplete="current-password" />
+            </div>
+        </div>
+          <br>
+          <div class="row">
+            <div>
+              <label class="form-label" for="password">Password</label>
+            </div>
+            <div class="form-floating" style="border-radius: 5px;">
+              <input type="password" id="password" formControlName="password" class="form-control" autocomplete="current-password" />
+            </div>
+          </div>
+          <br>
+          <br>
+          <div class="row">
+            <div>
+              <label class="form-label" for="confirmPassword">Confirm Password</label>
+            </div>
+            <div class="form-floating" style="border-radius: 5px;">
+              <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control" autocomplete="current-password" />
+            </div>
+          </div>
+          <br>
+          <div>
+            <button type="submit" [disabled]="registerForm.invalid" class="btn btn-lg btn-primary" style="border-radius: 21px;">Register</button>
+          </div>
+          <br />
+          <div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
