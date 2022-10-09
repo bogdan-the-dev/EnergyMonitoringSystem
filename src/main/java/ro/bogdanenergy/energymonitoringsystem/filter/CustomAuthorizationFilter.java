@@ -14,13 +14,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -33,13 +31,15 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if(request.getServletPath().equals("/api/auth/login") || request.getServletPath().equals("/api/auth/refreshToken")) {
             filterChain.doFilter(request, response);
         } else {
+            Cookie[] cookies = request.getCookies();
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            if(cookies != null ) {
                  try {
+                     String access_token = stream(request.getCookies()).filter(cookie -> Objects.equals(cookie.getName(), "access_token")).toString();
                      String token = authorizationHeader.substring("Bearer ".length());
                      Algorithm algorithm = Algorithm.HMAC256("Secret123!@#".getBytes());
                      JWTVerifier verifier = JWT.require(algorithm).build();
-                     DecodedJWT decodedJWT = verifier.verify(token);
+                     DecodedJWT decodedJWT = verifier.verify(access_token);
                      String username = decodedJWT.getSubject();
                      String[] roles = decodedJWT.getClaim("role").asArray(String.class);
                      Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

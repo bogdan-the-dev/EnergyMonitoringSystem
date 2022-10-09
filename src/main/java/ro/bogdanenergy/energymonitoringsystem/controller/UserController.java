@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/users/getUsers")
-    private List<UserDTO> getUsers() {
+    public List<UserDTO> getUsers() {
         return new ArrayList<>();
     }
 
