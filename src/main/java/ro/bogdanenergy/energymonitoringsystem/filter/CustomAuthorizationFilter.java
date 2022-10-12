@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ro.bogdanenergy.energymonitoringsystem.UriMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,7 +31,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(request.getServletPath().equals("/api/auth/login") || request.getServletPath().equals("/api/auth/refreshToken")) {
+        if(request.getServletPath().equals(UriMapper.LOGIN) || request.getServletPath().equals(UriMapper.REFRESH_TOKEN) || request.getServletPath().equals(UriMapper.USER_BASE + UriMapper.CREATE_USER)) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);

@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -18,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ro.bogdanenergy.energymonitoringsystem.dto.UserDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
 import ro.bogdanenergy.energymonitoringsystem.model.Role;
 import ro.bogdanenergy.energymonitoringsystem.repository.IUserRepository;
@@ -42,13 +41,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser user = this.userRepository.findAppUserByUsernameIs(username).orElse(null);
-        if (user == null) {
-            log.error("User not found in the database");
-            throw new UsernameNotFoundException("User not found");
-        } else {
-            log.info("User found in the database");
-        }
+        AppUser user = this.userRepository.findAppUserByUsernameIs(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        log.info("User found in the database");
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
         return new User(user.getUsername(), user.getPassword(), authorities);
@@ -57,19 +51,28 @@ public class UserService implements UserDetailsService {
     public AppUser getUserByUsername(String username) {
         return this.userRepository.findUserByUsernameIsIgnoreCase(username).orElse(null);
     }
+    public AppUser getUserById(int id) {
+        return this.userRepository.findById(id).orElse(null);
+    }
 
-    public AppUser createUser(AppUser appUser) {
-        if(!isUsernameTaken(appUser.getUsername())) {
+    public List<UserDTO> getAllUsers() {
+        List<UserDTO> users = new ArrayList<>();
+        this.userRepository.findAll().forEach(user -> {
+            users.add(new UserDTO(user.getId(), user.getUsername(), user.getEmail(), user.getRole().getName()));
+        });
+        return users;
+    }
+
+    public void createUser(AppUser appUser) throws RuntimeException {
+        if(isUsernameTaken(appUser.getUsername())) {
             log.info("Username already in use");
             throw new RuntimeException("Username already in use");
         }
-        if(appUser.getRole() != null && !Objects.equals(appUser.getRole().getName(), "User")) {
-            Role userRole = roleService.getRoleByName("User");
-            appUser.setRole(userRole);
-        }
+        Role userRole = roleService.getRoleByName("User");
+        appUser.setRole(userRole);
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         log.info("Created user {}", appUser.getUsername());
-        return this.userRepository.save(appUser);
+        this.userRepository.save(appUser);
     }
 
     public AppUser createAdminUser(AppUser appUser) {
@@ -84,27 +87,50 @@ public class UserService implements UserDetailsService {
         return userRepository.save(appUser);
     }
 
-    public void deleteUser(AppUser appUser) throws RuntimeException{
-        AppUser user = userRepository.findAppUserByUsernameIs(appUser.getUsername()).orElse(null);
+    public void deleteUser(Integer id) throws RuntimeException{
+        AppUser user = userRepository.findById(id).orElse(null);
         if(user == null) {
-            log.error("User {} not found in the database; abort delete user", appUser.getUsername());
+            log.error("User with id {} not found in the database; abort delete user", id);
             throw new RuntimeException("User not found, abort delete user");
         }
         this.userRepository.delete(user);
     }
 
-    public AppUser updateUser(AppUser appUser) {
+    public void updateUser(AppUser appUser) throws RuntimeException {
+        User requestUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AppUser user = userRepository.findById(appUser.getId()).orElse(null);
         if(user == null) {
             log.error("User with id {} not found, abort edit user", appUser.getId());
             throw new RuntimeException("User not found");
         }
-        user.setEmail(appUser.getEmail());
-        user.setUsername(appUser.getUsername());
-        return userRepository.save(user);
+
+        if(!requestUser.getUsername().equals(user.getUsername()) || requestUser.getAuthorities().contains("Admin")) {
+            throw new RuntimeException("You can't edit other users");
+        }
+
+        if(!Objects.equals(user.getEmail(), appUser.getEmail())) {
+            if (isEmailTaken(appUser.getEmail())) {
+                throw new RuntimeException("New email is already in use");
+            } else {
+                user.setEmail(appUser.getEmail());
+            }
+        }
+        if (!Objects.equals(user.getUsername(), appUser.getUsername())) {
+            if(isUsernameTaken(appUser.getUsername())) {
+                throw new RuntimeException("Username already taken");
+            }
+            else {
+                user.setUsername(appUser.getUsername());
+            }
+        }
+        this.userRepository.save(user);
     }
 
-    public void changePassword(AppUser appUser) {
+    public void changePassword(AppUser appUser) throws RuntimeException {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!principal.getUsername().equals(appUser.getUsername())) {
+            throw new RuntimeException("You can't change the password of other users, we do validate the requests.");
+        }
         AppUser user = userRepository.findAppUserByUsernameIs(appUser.getUsername()).orElse(null);
         if(user == null) {
             log.error("User {} not found in the database", appUser.getUsername());
@@ -113,7 +139,7 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(appUser.getPassword()));
     }
 
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws RuntimeException, IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {

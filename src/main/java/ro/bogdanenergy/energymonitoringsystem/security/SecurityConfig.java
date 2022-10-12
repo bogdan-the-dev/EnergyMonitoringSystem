@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ro.bogdanenergy.energymonitoringsystem.UriMapper;
 import ro.bogdanenergy.energymonitoringsystem.filter.CustomAuthenticationFilter;
 import ro.bogdanenergy.energymonitoringsystem.filter.CustomAuthorizationFilter;
 
@@ -30,10 +31,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
+        customAuthenticationFilter.setFilterProcessesUrl(UriMapper.LOGIN);
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeHttpRequests().antMatchers("/api/auth/login/**", "/api/auth/refreshToken/**").permitAll();
+        http.authorizeHttpRequests().antMatchers(UriMapper.LOGIN + "/**", UriMapper.REFRESH_TOKEN + "/**", UriMapper.USER_BASE +  UriMapper.CREATE_USER + "/**").permitAll();
+        http.authorizeHttpRequests().antMatchers(UriMapper.ADMIN_BASE + "/**").hasRole("Admin");
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

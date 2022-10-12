@@ -1,12 +1,13 @@
 package ro.bogdanenergy.energymonitoringsystem.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Data @NoArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 @Entity
 @Table(name = "measurement")
 public class Measurement {

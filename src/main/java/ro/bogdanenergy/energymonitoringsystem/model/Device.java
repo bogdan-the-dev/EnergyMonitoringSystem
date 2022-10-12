@@ -1,11 +1,12 @@
 package ro.bogdanenergy.energymonitoringsystem.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Data @NoArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 @Entity
 @Table(name = "device")
 public class Device {
@@ -16,7 +17,7 @@ public class Device {
     private Integer id;
 
     @Column(name = "location")
-    private String Location;
+    private String location;
 
     @Column(name = "description")
     private String description;
