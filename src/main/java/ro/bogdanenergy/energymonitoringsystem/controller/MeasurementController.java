@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementRequestBodyDTO;
 import ro.bogdanenergy.energymonitoringsystem.service.MeasurementService;
 import java.sql.Timestamp;
 
@@ -36,6 +37,16 @@ public class MeasurementController {
     public ResponseEntity getAllMeasurementsOfUser(@RequestParam(name = "id") int id) {
         try {
             return ResponseEntity.ok(measurementService.getAllMeasurementsOfUser(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(GET_ALL_MEASUREMENTS_OF_DEVICE_BY_DAY)
+    @ResponseBody
+    public ResponseEntity getMeasurementOfDeviceByDay(@RequestBody MeasurementRequestBodyDTO requestBodyDTO) {
+        try {
+           return ResponseEntity.ok(measurementService.getMeasurementsOfDeviceFromDay(requestBodyDTO));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementRequestBodyDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.Device;
 import ro.bogdanenergy.energymonitoringsystem.model.Measurement;
 import ro.bogdanenergy.energymonitoringsystem.repository.IMeasurementRepository;
@@ -26,9 +27,22 @@ public class MeasurementService {
         this.deviceService = deviceService;
     }
 
+    public List<MeasurementDTO> getMeasurementsOfDeviceFromDay(MeasurementRequestBodyDTO requestBodyDTO) {
+        Timestamp startTimestamp = new Timestamp(requestBodyDTO.getDay().getTime());
+        Timestamp endTime = new Timestamp(requestBodyDTO.getDay().getTime());
+        endTime.setHours(23);
+        endTime.setMinutes(59);
+        endTime.setSeconds(59);
+        return measurementRepository
+                .findMeasurementsByTimeBetweenAndDeviceIdIsOrderByTimeAsc(startTimestamp, endTime, requestBodyDTO.getDeviceId())
+                .orElse(new ArrayList<>())
+                .stream().map(MeasurementDTO::convert)
+                .collect(Collectors.toList());
+    }
+
     public List<MeasurementDTO> getAllMeasurementsOfDevice(int deviceId) {
         return measurementRepository
-                .findMeasurementsByDeviceIdIs(deviceId)
+                .findMeasurementsByDeviceIdIsOrderByTimeAsc(deviceId)
                 .orElse(new ArrayList<>())
                 .stream().map(MeasurementDTO::convert)
                 .collect(Collectors.toList());
@@ -45,11 +59,11 @@ public class MeasurementService {
 
     public List<MeasurementDTO> getMeasurementsOfDeviceInInterval(Timestamp startTime, Timestamp endTime, int device_id) {
         return measurementRepository
-                .findMeasurementsByTimeBetweenAndDeviceIdIs(startTime, endTime, device_id)
+                .findMeasurementsByTimeBetweenAndDeviceIdIsOrderByTimeAsc(startTime, endTime, device_id)
                 .orElse(new ArrayList<>())
                 .stream()
                 .map(MeasurementDTO::convert)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); 
     }
 
     public MeasurementDTO getMeasurement(int id) {

@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(UriMapper.DEVICE_BASE)
+@CrossOrigin(allowCredentials = "true", value = "http://localhost:4200")
 public class DeviceController {
 
     private final DeviceService deviceService;
@@ -36,6 +37,12 @@ public class DeviceController {
         return ResponseEntity.ok("");
     }
 
+    @GetMapping(UriMapper.GET_DEVICE_BY_ID)
+    @ResponseBody
+    public DeviceDTO getDevice(@RequestParam(name = "id") Integer id) {
+        return deviceService.getDevice(id);
+    }
+
     @GetMapping(UriMapper.GET_ALL_DEVICES)
     @Secured("Admin")
     @ResponseBody
@@ -45,9 +52,9 @@ public class DeviceController {
 
     @GetMapping(UriMapper.GET_DEVICES_OF_USER)
     @ResponseBody
-    public List<DeviceDTO> getDevicesOfUser(@RequestParam(name = "id") int id) {
+    public List<DeviceDTO> getDevicesOfUser(@RequestParam(name = "username") String username) {
         try {
-            return deviceService.getAllDevicesOfUSer(id);
+            return deviceService.getAllDevicesOfUSer(username);
         } catch (RuntimeException e) {
             return new ArrayList<>();
         }

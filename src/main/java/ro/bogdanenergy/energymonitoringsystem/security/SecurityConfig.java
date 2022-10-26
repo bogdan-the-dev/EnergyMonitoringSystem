@@ -12,12 +12,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ro.bogdanenergy.energymonitoringsystem.UriMapper;
 import ro.bogdanenergy.energymonitoringsystem.filter.CustomAuthenticationFilter;
 import ro.bogdanenergy.energymonitoringsystem.filter.CustomAuthorizationFilter;
+import ro.bogdanenergy.energymonitoringsystem.filter.CustomCorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,8 +41,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         customAuthenticationFilter.setFilterProcessesUrl(UriMapper.LOGIN);
-        http.cors().and();
         http.csrf().disable();
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("http://localhost:4200", "http://127.0.0.1:80"));
+            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
+            return cors;
+        }).and();
+//        http.addFilterBefore(corsFilter(), SessionManagementFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests().antMatchers(UriMapper.LOGIN + "/**", UriMapper.REFRESH_TOKEN + "/**", UriMapper.USER_BASE +  UriMapper.CREATE_USER + "/**").permitAll();
         http.authorizeHttpRequests().antMatchers(UriMapper.ADMIN_BASE + "/**").hasRole("Admin");
@@ -56,10 +68,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:4200/", "*"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "OPTIONS", "HEAD", "CONNECT", "TRACE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        configuration.setAllowCredentials(true);
         return source;
     }
+
+    @Bean
+    CustomCorsFilter corsFilter() {
+        CustomCorsFilter filter = new CustomCorsFilter();
+        return filter;
+    }
+
 }

@@ -27,11 +27,16 @@ public class DeviceDTO {
     }
 
     public static DeviceDTO convert(Device device) {
-        return new DeviceDTO(
-                device.getId(),
-                device.getLocation(),
-                device.getDescription(),
-                device.getMaximumConsumption(),
-                device.getOwner().getUsername());
+        if (device != null) {
+            return new DeviceDTO(
+                    device.getId(),
+                    device.getLocation(),
+                    device.getDescription(),
+                    device.getMaximumConsumption(),
+                    device.getOwner().getUsername());
+        }
+        else {
+            return null;
+        }
     }
 }

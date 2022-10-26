@@ -1,0 +1,20 @@
+<div class="container">
+  <h2>Detailed view about the device {{device.id}}</h2>
+  <mat-form-field appearance="fill">
+    <mat-label>Choose a date</mat-label>
+    <input #inputPicker matInput [matDatepicker]="picker" (dateChange)="onDateChanged()">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker [startAt]="date" ></mat-datepicker>
+  </mat-form-field>
+  <div>
+    <dx-chart
+      id="energyConsumptionChart"
+      [dataSource]="getChartsData()"
+      title="Device Energy Consumption">
+      <dxi-series type="spline"
+                  valueField="energyConsumption"
+                  argumentField="timeStamp"
+                  name="Energy in kW"></dxi-series>
+    </dx-chart>
+  </div>
+</div>

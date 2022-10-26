@@ -18,13 +18,11 @@ import org.springframework.util.StreamUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
@@ -47,12 +45,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User)authentication.getPrincipal();
+        List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         Algorithm algorithm = Algorithm.HMAC256("Secret123!@#".getBytes());
         String access_token = JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
-                .withClaim("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("role", roles)
                 .sign(algorithm);
 
         String refresh_token = JWT.create()
@@ -62,10 +61,20 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 //        response.setHeader("access_token", access_token);
 //        response.setHeader("refresh_token", refresh_token);
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
+        Map<String, String> responseObj = new HashMap<>();
+        responseObj.put("username", user.getUsername());
+        responseObj.put("userLevel", roles.get(0));
+        Cookie access_cookie = new Cookie("access_token", access_token);
+        access_cookie.setHttpOnly(true);
+        access_cookie.setMaxAge(10*60);
+        access_cookie.setPath("/");
+        Cookie refresh_cookie = new Cookie("refresh_token", refresh_token);
+        refresh_cookie.setHttpOnly(true);
+        refresh_cookie.setMaxAge(5*60*60);
+        refresh_cookie.setPath("/");
+        response.addCookie(access_cookie);
+        response.addCookie(refresh_cookie);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        new ObjectMapper().writeValue(response.getOutputStream(), responseObj);
     }
 }

@@ -10,9 +10,8 @@ import java.util.Optional;
 
 public interface IMeasurementRepository extends JpaRepository<Measurement, Integer> {
 
-    Optional<List<Measurement>> findMeasurementsByTimeBetweenAndDeviceIdIs(Timestamp statTime, Timestamp endTime, int deviceId);
-    Optional<List<Measurement>> findMeasurementsByDeviceIdIs(int deviceId);
-
+    Optional<List<Measurement>> findMeasurementsByTimeBetweenAndDeviceIdIsOrderByTimeAsc(Timestamp statTime, Timestamp endTime, int deviceId);
+    Optional<List<Measurement>> findMeasurementsByDeviceIdIsOrderByTimeAsc(int deviceId);
     Optional<List<Measurement>> findMeasurementsByTimeBetweenAndDeviceOwnerIdIs(Timestamp startTime, Timestamp endTime, int device_owner_id);
     Optional<List<Measurement>> findMeasurementsByDeviceOwnerIdIs(int ownerId);
 }

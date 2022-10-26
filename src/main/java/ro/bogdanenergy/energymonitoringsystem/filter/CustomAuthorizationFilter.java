@@ -15,6 +15,7 @@ import ro.bogdanenergy.energymonitoringsystem.UriMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -34,10 +35,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if(request.getServletPath().equals(UriMapper.LOGIN) || request.getServletPath().equals(UriMapper.REFRESH_TOKEN) || request.getServletPath().equals(UriMapper.USER_BASE + UriMapper.CREATE_USER)) {
             filterChain.doFilter(request, response);
         } else {
-            String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            Cookie[] cookies = request.getCookies();
+            if(cookies.length > 0) {
                  try {
-                     String token = authorizationHeader.substring("Bearer ".length());
+                     String token = cookies[0].getValue();
                      Algorithm algorithm = Algorithm.HMAC256("Secret123!@#".getBytes());
                      JWTVerifier verifier = JWT.require(algorithm).build();
                      DecodedJWT decodedJWT = verifier.verify(token);

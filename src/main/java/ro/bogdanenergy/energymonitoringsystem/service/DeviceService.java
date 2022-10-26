@@ -26,6 +26,10 @@ public class DeviceService {
         this.userService = userService;
     }
 
+    public DeviceDTO getDevice(Integer id) {
+        return DeviceDTO.convert(this.deviceRepository.findById(id).orElse(null));
+    }
+
     public List<DeviceDTO> getAllDevices() {
         return this.deviceRepository.findAll()
                                     .stream()
@@ -33,17 +37,19 @@ public class DeviceService {
                                     .collect(Collectors.toList());
     }
 
-    public List<DeviceDTO> getAllDevicesOfUSer(int userId) throws RuntimeException{
-        AppUser devicesOwner = userService.getUserById(userId);
+    public List<DeviceDTO> getAllDevicesOfUSer(String username) throws RuntimeException{
+        AppUser devicesOwner = userService.getUserByUsername(username);
         if(devicesOwner == null) {
             throw new RuntimeException("User not found");
         }
-        User requestUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!devicesOwner.getRole().getName().equals(requestUser.getUsername()) ||
-               requestUser.getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals("Admin"))) {
-            log.warn("User {} tried to access user {} devices", requestUser.getUsername(), devicesOwner.getUsername());
+        String requestRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        String requestUsername = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!devicesOwner.getUsername().equals(requestUsername) &&
+                !requestRole.equals("Admin")) {
+            log.warn("User {} tried to access user {} devices", requestUsername, devicesOwner.getUsername());
+            throw new RuntimeException("You don't have permission");
             }
-        List<Device> devices = deviceRepository.getDevicesByOwnerIdIs(userId)
+        List<Device> devices = deviceRepository.getDevicesByOwnerIdIs(devicesOwner.getId())
                                                .orElse(new ArrayList<>());
         return devices.stream().map(DeviceDTO::convert).collect(Collectors.toList());
     }

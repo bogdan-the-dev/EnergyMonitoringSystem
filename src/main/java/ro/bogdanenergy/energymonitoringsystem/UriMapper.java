@@ -24,6 +24,7 @@ public class UriMapper {
 
     public static final String DEVICE_BASE = BASE + "/device";
     public static final String CREATE_DEVICE = "/create";
+    public static final String GET_DEVICE_BY_ID = "/get";
     public static final String GET_ALL_DEVICES = "/get-all";
     public static final String GET_DEVICES_OF_USER = "/get-all-by-user";
     public static final String EDIT_DEVICE = "/edit";
@@ -32,6 +33,7 @@ public class UriMapper {
 
     public static final String MEASUREMENT_BASE = BASE + "/measurement";
     public static final String GET_ALL_MEASUREMENTS_OF_DEVICE = "/get-all-of-device";
+    public static final String GET_ALL_MEASUREMENTS_OF_DEVICE_BY_DAY = "/get-by-day";
     public static final String GET_ALL_MEASUREMENTS_OF_USER = "/get-all-of-user";
     public static final String GET_MEASUREMENTS_OF_DEVICE_IN_INTERVAL = "/get-measurements-in-interval";
     public static final String GET_MEASUREMENT = "/get-measurement";
