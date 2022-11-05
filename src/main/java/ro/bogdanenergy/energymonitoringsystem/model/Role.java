@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 @Entity
-@Table(name = "role", schema = "bogdanenergy")
+@Table(name = "role")
 public class Role {
 
     public Role(String name) {
@@ -16,11 +16,9 @@ public class Role {
     }
 
     @Id
-    @SequenceGenerator(name = "role_role_id_seq")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "role_id", unique = true)
     private int id;
 
-    @Column(name = "name")
     private String name;
 }

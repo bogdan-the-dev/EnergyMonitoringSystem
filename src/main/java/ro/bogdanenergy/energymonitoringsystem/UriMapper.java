@@ -20,6 +20,7 @@ public class UriMapper {
     public static final String GET_ALL_USERS = "/get-users";
     public static final String EDIT_USER = USER_BASE + "/edit";
     public static final String DELETE_USER = ADMIN_BASE + "/delete";
+    public static final String GET_ALL_STANDARD_USERS = USER_BASE + "/get_all_regular";
 
 
     public static final String DEVICE_BASE = BASE + "/device";

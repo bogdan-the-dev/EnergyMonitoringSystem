@@ -7,6 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ro.bogdanenergy.energymonitoringsystem.UriMapper;
+import ro.bogdanenergy.energymonitoringsystem.dto.RegularUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.UserDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
 import ro.bogdanenergy.energymonitoringsystem.service.UserService;
@@ -30,6 +31,12 @@ public class UserController {
     @ResponseBody
     private List<UserDTO> getUsers() {
         return this.userService.getAllUsers();
+    }
+
+    @GetMapping(UriMapper.GET_ALL_STANDARD_USERS)
+    @ResponseBody
+    public List<RegularUserDTO> getRegularUsers() {
+        return userService.getAllStandardUsers();
     }
 
     @PostMapping(UriMapper.REGISTER_ADMIN)

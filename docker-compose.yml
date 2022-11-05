@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    environment:
+      - POSTGRES_USER=bogdan
+      - POSTGRES_PASSWORD=W3lcome
+      - POSTGRES_DB=DataStorage
+    ports:
+      - "5433:5432"
+    expose:
+      - "5433"
+    networks:
+      - internal-network
+
+  backend-api:
+    image: bogane_energy_backend
+    ports:
+      - "8080:8080"
+    container_name: backend-api
+    depends_on:
+      - db
+    networks:
+      - internal-network
+
+  fontend:
+    image: bogane_energy_frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend-api
+    networks:
+      - internal-network
+    container_name: fontend
+
+networks:
+  internal-network:
+    driver: bridge

@@ -35,4 +35,17 @@ export class SharedEffects {
         })
       )
 
+  // @Effect()
+  // logout = this.action
+  //   .pipe(
+  //     ofType(SharedActions.LOGOUT),
+  //     map(Convert.ToPayload),
+  //     switchMap(payload => {
+  //       return of({type: SharedActions.LOGOUT_FINISHED, payload: {success: true}})
+  //     }),
+  //     catchError((error) => {
+  //       return of({type: SharedActions.LOGOUT_FINISHED, payload: {success: false}})
+  //     })
+  //   )
+
 }

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ro.bogdanenergy.energymonitoringsystem.dto.RegularUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.UserDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
 import ro.bogdanenergy.energymonitoringsystem.model.Role;
@@ -76,9 +77,9 @@ public class UserService implements UserDetailsService {
     }
 
     public AppUser createAdminUser(AppUser appUser) {
-        if(!isUsernameTaken(appUser.getUsername())) {
-            log.info("Username already in use");
-            throw new RuntimeException("Username already in use");
+        if(isUsernameTaken(appUser.getUsername())) {
+            log.info("Username" + appUser.getUsername() + "already in use");
+            throw new RuntimeException("Username" + appUser.getUsername() + "already in use");
         }
         Role role = roleService.getRoleByName("Admin");
         appUser.setRole(role);
@@ -94,6 +95,15 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("User not found, abort delete user");
         }
         this.userRepository.delete(user);
+    }
+
+    public List<RegularUserDTO> getAllStandardUsers() {
+        return userRepository
+                .findAppUsersByRoleId(2)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(RegularUserDTO::convert)
+                .collect(Collectors.toList());
     }
 
     public void updateUser(AppUser appUser) throws RuntimeException {

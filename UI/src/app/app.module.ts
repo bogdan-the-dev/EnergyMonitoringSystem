@@ -27,6 +27,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatInputModule} from "@angular/material/input";
 import {MatNativeDateModule} from "@angular/material/core";
 import { DropdownDirective } from './shared/directive/dropdown.directive';
+import {AdminModule} from "./admin/admin.module";
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { DropdownDirective } from './shared/directive/dropdown.directive';
     MatFormFieldModule,
     MatDatepickerModule,
     MatInputModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    AdminModule
   ],
   providers: [
     {

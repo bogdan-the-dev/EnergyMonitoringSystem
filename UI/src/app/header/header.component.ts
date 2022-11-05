@@ -1,6 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {Subscription} from "rxjs";
+import {SharedActions} from "../shared/state-management/shared.actions";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-header',
@@ -12,10 +14,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isAuthenticated
   isAdmin
   username
-  constructor(private store: Store<any>) { }
+  constructor(private store: Store<any>, private router: Router) { }
 
   ngOnInit(): void {
-    console.log(this.store)
     this.subscriptions.push(this.store
       .select(s => s.sharedState.isAuthenticated)
       .subscribe((res) => {
@@ -24,6 +25,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.store
       .select(s => s.sharedState.loginUsername)
       .subscribe((res) => {
+        console.log(res)
         this.username = res
       }))
     this.subscriptions.push(this.store
@@ -31,6 +33,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((res) => {
         this.isAdmin = res
       }))
+  }
+
+  onLogOut() {
+    this.store.dispatch({type: SharedActions.LOGOUT, payload: true})
+    this.router.navigate(['/home'])
   }
 
   ngOnDestroy() {

@@ -2,6 +2,8 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Device} from "../model/device.model";
+import * as http from "http";
+import {GET_ALL_DEVICES} from "../../../UriMapper";
 
 @Injectable({providedIn: 'root'})
 export class DeviceService {
@@ -16,5 +18,9 @@ export class DeviceService {
   }
   public getDeviceById(id: number): Observable<Device> {
     return this.http.get<Device>(DeviceService.GET_DEVICE_BY_ID + '?id=' + id);
+  }
+
+  public getAllDevices(): Observable<Device[]> {
+    return this.http.get<Device[]>(GET_ALL_DEVICES)
   }
 }

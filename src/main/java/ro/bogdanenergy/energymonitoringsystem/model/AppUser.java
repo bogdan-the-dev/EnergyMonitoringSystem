@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 @Entity
-@Table(name="user", schema = "bogdanenergy")
+@Table(name="user")
 public class AppUser {
 
     public AppUser(String username, String password, String email, Role role) {
@@ -21,8 +21,7 @@ public class AppUser {
     }
 
     @Id
-    @SequenceGenerator(name = "user_id_seq")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="id")
     private int id;
 
