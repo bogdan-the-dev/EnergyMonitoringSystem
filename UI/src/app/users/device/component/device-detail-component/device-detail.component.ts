@@ -24,7 +24,6 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.id = Number(this.router.snapshot.params['id'])
-    console.log(this.pickerInput)
     this.deviceService.getDeviceById(this.id).subscribe((res) => {
       this.device = res
     })

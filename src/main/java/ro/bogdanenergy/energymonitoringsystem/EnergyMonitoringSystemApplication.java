@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ro.bogdanenergy.energymonitoringsystem.dto.RegisterUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
 import ro.bogdanenergy.energymonitoringsystem.model.Role;
 import ro.bogdanenergy.energymonitoringsystem.service.RoleService;
@@ -33,7 +34,7 @@ public class EnergyMonitoringSystemApplication {
 				roleService.createRole(new Role("User"));
 			}
 			if (userService.getUserByUsername("admin") == null) {
-				userService.createAdminUser(new AppUser("admin", "admin", "admin@bogdanenergy.ro", null));
+				userService.createAdminUser(new RegisterUserDTO("admin", "admin", "admin@bogdanenergy.ro"));
 			}
 		};
 	}

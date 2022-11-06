@@ -1,10 +1,25 @@
-<div>
-  <div class="dx-fieldset">
-    <div class="dx-field">
-      <div class="dx-field-label">User</div>
-      <div class="dx-field-value">
-        <dx-select-box [items]="users"></dx-select-box>
-      </div>
-    </div>
+<div class="col">
+  <div class="row">
+    <h4>Choose user</h4>
+    <mat-form-field appearance="fill">
+      <mat-label>User</mat-label>
+      <mat-select [(value)]="selectedUser">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let user of usersName" [value]="user">{{user}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <h4>Choose device</h4>
+    <mat-form-field appearance="fill">
+      <mat-label>Device</mat-label>
+      <mat-select [(value)]="selectedDevice">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let device of devicesName" [value]="device">{{device}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" (click)="onClick()" type="button" [disabled]="selectedDevice === undefined || selectedUser === undefined">Assign device</button>
   </div>
 </div>

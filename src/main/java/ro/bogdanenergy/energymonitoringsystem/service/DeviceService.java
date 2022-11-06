@@ -3,14 +3,12 @@ package ro.bogdanenergy.energymonitoringsystem.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import ro.bogdanenergy.energymonitoringsystem.dto.DeviceDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
 import ro.bogdanenergy.energymonitoringsystem.model.Device;
 import ro.bogdanenergy.energymonitoringsystem.repository.IDeviceRepository;
 
-import javax.naming.NameNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,34 +57,37 @@ public class DeviceService {
         return device != null ? DeviceDTO.convert(device) : null;
     }
 
+    public void unassignDevices(String ownerUsername) {
+        List<Device> devices = deviceRepository.getDevicesByOwnerUsernameIs(ownerUsername).orElse(new ArrayList<>());
+       for(Device device: devices) {
+           device.setOwner(null);
+           deviceRepository.save(device);
+       }
+    }
     public Device getDevice(int id) {
         return deviceRepository.findById(id).orElse(null);
     }
 
-    public void createDevice(DeviceDTO deviceDTO) throws NameNotFoundException {
+    public void createDevice(DeviceDTO deviceDTO) {
         AppUser user = userService.getUserByUsername(deviceDTO.getOwnerUsername());
-        if(user == null) {
-            log.error("Owner not found in the database");
-            throw new NameNotFoundException("Owner not found");
-        }
         Device device = deviceDTO.getDevice();
-        device.setOwner(user);
+        if(user != null) {
+            device.setOwner(user);
+        }
         this.deviceRepository.save(device);
-        log.info("Device '{}' with owner {} created", device.getId(), device.getOwner().getUsername());
+        log.info("Device '{}' created", device.getId());
     }
 
     public void editDevice(DeviceDTO deviceDTO) throws RuntimeException {
         Device deviceFromDb = deviceRepository.findById(deviceDTO.getDevice().getId())
                                               .orElseThrow( () -> new RuntimeException("Device not found"));
         AppUser user = userService.getUserByUsername(deviceDTO.getOwnerUsername());
-        if(user == null) {
-            log.error("Device's owner not present in the db");
-            throw new RuntimeException("Device's owner invalid");
+        if(user != null) {
+            deviceFromDb.setOwner(user);
         }
         deviceFromDb.setDescription(deviceDTO.getDescription());
         deviceFromDb.setLocation(deviceDTO.getLocation());
         deviceFromDb.setMaximumConsumption(deviceDTO.getMaximumConsumption());
-        deviceFromDb.setOwner(user);
 
         log.info("Device {} modified", deviceDTO.getId());
         deviceRepository.save(deviceFromDb);
@@ -101,10 +102,10 @@ public class DeviceService {
         deviceRepository.delete(device);
     }
 
-    public void assignOwner(int deviceId, int ownerId) throws RuntimeException {
-        AppUser user = userService.getUserById(ownerId);
+    public void assignOwner(int deviceId, String ownerUsername) throws RuntimeException {
+        AppUser user = userService.getUserByUsername(ownerUsername);
         if (user == null) {
-            log.warn("User {} not found", ownerId);
+            log.warn("User {} not found", ownerUsername);
             throw new RuntimeException("User not found");
         }
         Device device = deviceRepository.findById(deviceId)

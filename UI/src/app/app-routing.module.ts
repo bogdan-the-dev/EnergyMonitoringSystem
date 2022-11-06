@@ -14,6 +14,11 @@ import {
 } from "./admin/component/admin-management-portal/admin-management-portal.component";
 import {CanActivateAdminFunctions} from "./shared/guard/canActivateAdminFunctions";
 import {DeviceMappingComponent} from "./admin/component/device-mapping/device-mapping.component";
+import {DeviceManagementPageComponent} from "./admin/page/device-management-page/device-management-page.component";
+import {CreateDeviceComponent} from "./admin/component/create-device/create-device.component";
+import {EditDeviceComponent} from "./admin/component/edit-device/edit-device.component";
+import {CreateAdminComponent} from "./admin/component/create-admin/create-admin.component";
+import {EditAccountComponent} from "./account/edit-account/edit-account.component";
 
 const appRoutes: Routes = [
   {path: 'auth', component: AuthComponent, children: [
@@ -24,8 +29,13 @@ const appRoutes: Routes = [
   {path: 'user/devices', component: UserDevicesComponent, canActivate: [CanActivateUserFunctions, CanActivateSecuredFunction]},
   {path: 'device-detail/:id', component: DeviceDetailComponent, canActivate: [CanActivateUserFunctions, CanActivateSecuredFunction]},
   {path: 'admin', component: AdminManagementPortalComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions], children: [
-      {path: 'device-mapping', component: DeviceMappingComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]}
+      {path: 'device-mapping', component: DeviceMappingComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]},
+      {path: 'device-management', component: DeviceManagementPageComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]},
+      {path: 'create-device', component: CreateDeviceComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]},
+      {path: 'edit-device/:id', component: EditDeviceComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]},
+      {path: 'create-admin', component: CreateAdminComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]}
     ]},
+  {path: 'account', component: EditAccountComponent, canActivate: [CanActivateSecuredFunction]},
   {path: '', redirectTo:"/home", pathMatch:"full"}
 
 ]
