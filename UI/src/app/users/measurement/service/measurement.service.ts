@@ -17,6 +17,9 @@ export class MeasurementService {
     return this.http.get<Measurement[]>(GET_MEASUREMENTS_FOR_DEVICE + '?id=' + id)
   }
   public getMeasurementsForDeviceByDay(id: number, date: Date): Observable<Measurement[]> {
+    console.log(date)
+    date.setHours(12,0,0,0)
+    console.log(date)
     return this.http.post<Measurement[]>(GET_MEASUREMENTS_FOR_DEVICE_BY_DAY, {deviceId: id, day: date})
   }
 }

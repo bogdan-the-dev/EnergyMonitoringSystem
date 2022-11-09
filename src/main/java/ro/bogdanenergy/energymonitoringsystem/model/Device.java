@@ -8,11 +8,11 @@ import javax.persistence.*;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 @Entity
-@Table(name = "device", schema = "bogdanenergy")
+@Table(name = "device")
 public class Device {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer id;
 
@@ -28,4 +28,11 @@ public class Device {
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private AppUser owner;
+
+    public Device(String location, String description, Double maximumConsumption) {
+        this.location = location;
+        this.description = description;
+        this.maximumConsumption = maximumConsumption;
+    }
+
 }

@@ -21,6 +21,12 @@ public class DeviceDTO {
         this.maximumConsumption = maximumConsumption;
     }
 
+    public DeviceDTO(String location, String description, Double maximumConsumption) {
+        this.location = location;
+        this.description = description;
+        this.maximumConsumption = maximumConsumption;
+    }
+
     public Device getDevice() {
         return new Device(id, location, description, maximumConsumption, null);
     }

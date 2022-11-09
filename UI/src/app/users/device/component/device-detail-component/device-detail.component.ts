@@ -32,12 +32,12 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
   getChartsData() : any{
     this.chartData = []
     this.chartData.push({
-      timeStamp: this.date,
+      timeStamp: new Date(this.date),
       energyConsumption: 0
     })
     this.measurements.forEach((measurement) => {
       this.chartData.push({
-        timeStamp: new Date(measurement.time),
+        timeStamp: measurement.time,
         energyConsumption: measurement.consumption
       })
     })
@@ -47,15 +47,15 @@ export class DeviceDetailComponent implements OnInit, OnDestroy {
       timeStamp: new Date(finalDate),
       energyConsumption: 0
     })
+    console.log(this.chartData)
     return this.chartData
   }
 
   onDateChanged() {
-    console.log('plaaaa')
-    console.log(this.pickerInput.nativeElement.value)
-    console.log(new Date(this.pickerInput.nativeElement.value).getDate().toString())
     this.date = new Date(this.pickerInput.nativeElement.value)
+    console.log(this.date)
     this.measurementService.getMeasurementsForDeviceByDay(this.id, this.date).subscribe(res => {
+      console.log(res)
       this.measurements = res
     })
   }
