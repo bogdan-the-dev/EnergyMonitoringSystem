@@ -46,7 +46,7 @@ public class EnergyMonitoringSystemApplication {
 			}
 			DeviceDTO deviceDTO;
 			if(deviceService.getAllDevices().isEmpty()) {
-				deviceDTO = new DeviceDTO("bec","bucatarie",20.0);
+				deviceDTO = new DeviceDTO("bucatarie","bec",20.0);
 				deviceService.createDevice(deviceDTO);
 			}
 			Device device = deviceService.getAllDevices().get(0).getDevice();
