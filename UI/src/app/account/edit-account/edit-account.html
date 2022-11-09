@@ -1,0 +1,36 @@
+<div class="container">
+  <h3>Account management</h3>
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()" style="width:100%">
+    <div class="row">
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label> Password
+        </mat-label>
+        <input type="password"  matInput formControlName="password" required>
+        <mat-error *ngIf="editForm.controls?.['password'].touched && editForm.controls?.['password'].invalid">
+          <span *ngIf="editForm.controls?.['password'].errors?.['required']">This field is mandatory.</span>
+        </mat-error>
+        <mat-error *ngIf="editForm.controls?.['password'].touched && editForm.controls?.['password'].invalid">
+          <span *ngIf="editForm.get('password').value.length < 8">Password should be at least 8 characters long.</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label> Confirm Password
+        </mat-label>
+        <input type="password"  matInput formControlName="confirmPassword" required>
+        <mat-error *ngIf="!editForm.get('password').value === editForm.get('confirmPassword').value">
+          <span *ngIf="!editForm.get('password').value === editForm.get('confirmPassword').value">Passwords don't match.</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid">Change password</button>
+  </form>
+  <br>
+  <mat-divider></mat-divider>
+  <h4>Delete account</h4>
+  <button mat-fab color="warn" aria-label="Delete account" (click)="onDelete()">
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>

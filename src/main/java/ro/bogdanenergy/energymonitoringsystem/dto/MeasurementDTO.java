@@ -14,6 +14,12 @@ public class MeasurementDTO {
     private Timestamp time;
     private int deviceId;
 
+    public MeasurementDTO(Double consumption, Timestamp time, int deviceId) {
+        this.consumption = consumption;
+        this.time = time;
+        this.deviceId = deviceId;
+    }
+
     public Measurement getMeasurement() {
         return new Measurement(
                 id,

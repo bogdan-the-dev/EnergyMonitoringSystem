@@ -28,4 +28,11 @@ public class Device {
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private AppUser owner;
+
+    public Device(String location, String description, Double maximumConsumption) {
+        this.location = location;
+        this.description = description;
+        this.maximumConsumption = maximumConsumption;
+    }
+
 }

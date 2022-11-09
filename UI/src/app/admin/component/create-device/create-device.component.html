@@ -1,0 +1,53 @@
+<h3>Create Device</h3>
+<div class="card-content">
+<div class="col-md-12 offset-md-1">
+<form [formGroup]="createDeviceForm" (ngSubmit)="onSubmit()" style="width:100%">
+  <div class="row">
+  <mat-form-field class="form-field" appearance="outline">
+    <mat-label> Location
+    </mat-label>
+    <input matInput formControlName="location" required>
+    <mat-error *ngIf="createDeviceForm.controls?.['location'].touched && createDeviceForm.controls?.['location'].invalid">
+      <span *ngIf="createDeviceForm.controls?.['location'].errors?.['required']">This field is mandatory.</span>
+    </mat-error>
+  </mat-form-field>
+  </div>
+  <div class="row">
+  <mat-form-field class="form-field" appearance="outline">
+    <mat-label> Description
+    </mat-label>
+    <textarea  matInput formControlName="description" required></textarea>
+    <mat-error *ngIf="createDeviceForm.controls?.['description'].touched && createDeviceForm.controls?.['description'].invalid">
+      <span *ngIf="createDeviceForm.controls?.['description'].errors?.['required']">This field is mandatory.</span>
+    </mat-error>
+  </mat-form-field>
+  </div>
+  <div class="row">
+  <mat-form-field class="form-field" appearance="outline">
+    <mat-label> Maximum Consumption
+    </mat-label>
+    <input type="number"  matInput formControlName="maximumConsumption" required>
+    <mat-error *ngIf="createDeviceForm.controls?.['maximumConsumption'].touched && createDeviceForm.controls?.['maximumConsumption'].invalid">
+      <span *ngIf="createDeviceForm.controls?.['maximumConsumption'].errors?.['required']">This field is mandatory.</span>
+    </mat-error>
+  </mat-form-field>
+  </div>
+  <div class="row">
+  <mat-checkbox class="example-margin" formControlName="assignUser">
+    Assign user to device
+  </mat-checkbox>
+  </div>
+  <div class="row">
+  <mat-form-field appearance="fill" >
+    <mat-label>Select User</mat-label>
+    <mat-select formControlName="ownerUsername" [disabled]="!createDeviceForm.get('assignUser').value">
+      <mat-option *ngFor="let user of users" [value]="user">{{user}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  </div>
+  <div class="row">
+    <button mat-raised-button color="primary" type="submit" [disabled]="createDeviceForm.invalid">Add Device</button>
+  </div>
+</form>
+</div>
+</div>

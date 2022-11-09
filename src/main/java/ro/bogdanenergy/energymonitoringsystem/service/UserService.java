@@ -16,9 +16,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ro.bogdanenergy.energymonitoringsystem.dto.DeviceDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.RegisterUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.RegularUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.UserDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
+import ro.bogdanenergy.energymonitoringsystem.model.Device;
 import ro.bogdanenergy.energymonitoringsystem.model.Role;
 import ro.bogdanenergy.energymonitoringsystem.repository.IUserRepository;
 
@@ -37,7 +40,6 @@ public class UserService implements UserDetailsService {
 
     private final IUserRepository userRepository;
     private final RoleService roleService;
-
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -64,36 +66,45 @@ public class UserService implements UserDetailsService {
         return users;
     }
 
-    public void createUser(AppUser appUser) throws RuntimeException {
-        if(isUsernameTaken(appUser.getUsername())) {
+    public void createUser(RegisterUserDTO userDTO) throws RuntimeException {
+        if(isUsernameTaken(userDTO.getUsername())) {
             log.info("Username already in use");
             throw new RuntimeException("Username already in use");
         }
+        AppUser user = new AppUser();
         Role userRole = roleService.getRoleByName("User");
-        appUser.setRole(userRole);
-        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-        log.info("Created user {}", appUser.getUsername());
-        this.userRepository.save(appUser);
+        user.setRole(userRole);
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setEmail(userDTO.getEmail());
+        user.setUsername(userDTO.getUsername());
+        log.info("Created user {}", user.getUsername());
+        this.userRepository.save(user);
     }
 
-    public AppUser createAdminUser(AppUser appUser) {
-        if(isUsernameTaken(appUser.getUsername())) {
-            log.info("Username" + appUser.getUsername() + "already in use");
-            throw new RuntimeException("Username" + appUser.getUsername() + "already in use");
+    public void createAdminUser(RegisterUserDTO userDTO) {
+        if(isUsernameTaken(userDTO.getUsername())) {
+            log.info("Username" + userDTO.getUsername() + "already in use");
+            throw new RuntimeException("Username " + userDTO.getUsername() + " already in use");
         }
         Role role = roleService.getRoleByName("Admin");
+        AppUser appUser = new AppUser();
+        appUser.setUsername(userDTO.getUsername());
         appUser.setRole(role);
-        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+        appUser.setEmail(userDTO.getEmail());
+        appUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         log.info("Admin user {} created", appUser.getUsername());
-        return userRepository.save(appUser);
+        userRepository.save(appUser);
     }
 
-    public void deleteUser(Integer id) throws RuntimeException{
-        AppUser user = userRepository.findById(id).orElse(null);
+    public void deleteUser(String username) throws RuntimeException{
+        AppUser user = userRepository.findAppUserByUsernameIs(username).orElse(null);
         if(user == null) {
-            log.error("User with id {} not found in the database; abort delete user", id);
+            log.error("User with username {} not found in the database; abort delete user", username);
             throw new RuntimeException("User not found, abort delete user");
         }
+
+
+
         this.userRepository.delete(user);
     }
 
@@ -106,11 +117,11 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-    public void updateUser(AppUser appUser) throws RuntimeException {
+    public void updateUser(RegisterUserDTO userDTO) throws RuntimeException {
         User requestUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AppUser user = userRepository.findById(appUser.getId()).orElse(null);
+        AppUser user = userRepository.findAppUserByUsernameIs(userDTO.getUsername()).orElse(null);
         if(user == null) {
-            log.error("User with id {} not found, abort edit user", appUser.getId());
+            log.error("User with username {} not found, abort edit user", userDTO.getUsername());
             throw new RuntimeException("User not found");
         }
 
@@ -118,35 +129,37 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("You can't edit other users");
         }
 
-        if(!Objects.equals(user.getEmail(), appUser.getEmail())) {
-            if (isEmailTaken(appUser.getEmail())) {
+        if(!Objects.equals(user.getEmail(), userDTO.getEmail())) {
+            if (isEmailTaken(userDTO.getEmail())) {
                 throw new RuntimeException("New email is already in use");
             } else {
-                user.setEmail(appUser.getEmail());
+                user.setEmail(userDTO.getEmail());
             }
         }
-        if (!Objects.equals(user.getUsername(), appUser.getUsername())) {
-            if(isUsernameTaken(appUser.getUsername())) {
+        if (!Objects.equals(user.getUsername(), userDTO.getUsername())) {
+            if(isUsernameTaken(userDTO.getUsername())) {
                 throw new RuntimeException("Username already taken");
             }
             else {
-                user.setUsername(appUser.getUsername());
+                user.setUsername(userDTO.getUsername());
             }
         }
         this.userRepository.save(user);
     }
 
-    public void changePassword(AppUser appUser) throws RuntimeException {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!principal.getUsername().equals(appUser.getUsername())) {
+    public void changePassword(RegisterUserDTO userDTO) throws RuntimeException {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!username.equals(userDTO.getUsername())) {
             throw new RuntimeException("You can't change the password of other users, we do validate the requests.");
         }
-        AppUser user = userRepository.findAppUserByUsernameIs(appUser.getUsername()).orElse(null);
+        AppUser user = userRepository.findAppUserByUsernameIs(userDTO.getUsername()).orElse(null);
         if(user == null) {
-            log.error("User {} not found in the database", appUser.getUsername());
+            log.error("User {} not found in the database", userDTO.getUsername());
             throw new RuntimeException("User not found");
         }
-        user.setPassword(passwordEncoder.encode(appUser.getPassword()));
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userRepository.save(user);
+        log.info("Password changed for user {}", username);
     }
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws RuntimeException, IOException {

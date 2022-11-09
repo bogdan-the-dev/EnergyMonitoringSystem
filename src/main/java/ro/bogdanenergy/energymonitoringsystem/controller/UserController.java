@@ -1,29 +1,29 @@
 package ro.bogdanenergy.energymonitoringsystem.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ro.bogdanenergy.energymonitoringsystem.UriMapper;
+import ro.bogdanenergy.energymonitoringsystem.dto.RegisterUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.RegularUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.UserDTO;
-import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
+import ro.bogdanenergy.energymonitoringsystem.service.DeviceService;
 import ro.bogdanenergy.energymonitoringsystem.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @RestController
-@RequestMapping(UriMapper.BASE + UriMapper.USER_BASE)
+@RequestMapping(UriMapper.USER_BASE)
 public class UserController {
     private final UserService userService;
+    private final DeviceService deviceService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, DeviceService deviceService) {
         this.userService = userService;
+        this.deviceService = deviceService;
     }
 
     @GetMapping(UriMapper.GET_ALL_USERS)
@@ -42,42 +42,43 @@ public class UserController {
     @PostMapping(UriMapper.REGISTER_ADMIN)
     @Secured("Admin")
     @ResponseBody
-    public AppUser createAdmin(@RequestBody AppUser appUser) {
-        return userService.createAdminUser(appUser);
+    public String createAdmin(@RequestBody RegisterUserDTO userDTO) {
+        userService.createAdminUser(userDTO);
+        return "done";
     }
 
     @PostMapping(UriMapper.CREATE_USER)
     @ResponseBody
-    public ResponseEntity registerUser(@RequestBody AppUser appUser) {
+    public ResponseEntity registerUser(@RequestBody RegisterUserDTO userDTO) {
         try {
-            this.userService.createUser(appUser);
+            this.userService.createUser(userDTO);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
-        return ResponseEntity.ok("User created");
+        return ResponseEntity.ok("");
     }
 
     @PutMapping(UriMapper.EDIT_USER)
     @ResponseBody
-    public ResponseEntity editUser(@RequestBody AppUser appUser) {
+    public ResponseEntity editUser(@RequestBody RegisterUserDTO userDTO) {
         try {
-            this.userService.updateUser(appUser);
+            this.userService.changePassword(userDTO);
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body("");
         }
-        return ResponseEntity.ok("User modified");
+        return ResponseEntity.ok("");
     }
 
-    @Secured("Admin")
     @DeleteMapping(UriMapper.DELETE_USER)
     @ResponseBody
-    public ResponseEntity deleteUser(@RequestParam(name="id") Integer id) {
+    public ResponseEntity deleteUser(@RequestParam(name="username") String username) {
         try {
-            this.userService.deleteUser(id);
+            this.deviceService.unassignDevices(username);
+            this.userService.deleteUser(username);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
-        return ResponseEntity.ok("User deleted");
+        return ResponseEntity.ok("");
     }
 
 }
