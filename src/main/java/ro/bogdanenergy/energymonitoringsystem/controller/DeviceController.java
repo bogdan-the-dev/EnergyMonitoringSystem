@@ -14,6 +14,7 @@ import javax.naming.NameNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping(UriMapper.DEVICE_BASE)
@@ -89,6 +90,14 @@ public class DeviceController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("");
+    }
+
+    @GetMapping(UriMapper.GET_RANDOM_ID)
+    @ResponseBody
+    public int getRandomId() {
+        List<DeviceDTO> deviceDTOS = deviceService.getAllDevices();
+        Random random = new Random();
+        return deviceDTOS.get(random.nextInt(deviceDTOS.size())).getId();
     }
 
 }

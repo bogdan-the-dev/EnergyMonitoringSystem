@@ -13,8 +13,6 @@ services:
       - "5433:5432"
     expose:
       - "5433"
-    networks:
-      - internal-network
 
   backend-api:
     image: bogane_energy_backend
@@ -23,8 +21,6 @@ services:
     container_name: backend-api
     depends_on:
       - db
-    networks:
-      - internal-network
 
   fontend:
     image: bogane_energy_frontend
@@ -32,10 +28,11 @@ services:
       - "4200:80"
     depends_on:
       - backend-api
-    networks:
-      - internal-network
     container_name: fontend
 
-networks:
-  internal-network:
-    driver: bridge
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"

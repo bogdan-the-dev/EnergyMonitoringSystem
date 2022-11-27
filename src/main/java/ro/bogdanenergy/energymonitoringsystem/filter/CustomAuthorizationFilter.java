@@ -32,7 +32,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(request.getServletPath().equals(UriMapper.LOGIN) || request.getServletPath().equals(UriMapper.REFRESH_TOKEN) || request.getServletPath().equals(UriMapper.USER_BASE + UriMapper.CREATE_USER)) {
+        if(request.getServletPath().equals(UriMapper.LOGIN) || request.getServletPath().equals(UriMapper.REFRESH_TOKEN) || request.getServletPath().equals(UriMapper.USER_BASE + UriMapper.CREATE_USER) || request.getServletPath().equals(UriMapper.DEVICE_BASE + UriMapper.GET_RANDOM_ID)) {
             filterChain.doFilter(request, response);
         } else {
             Cookie[] cookies = request.getCookies();
