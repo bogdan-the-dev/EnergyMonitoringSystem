@@ -31,6 +31,7 @@ public class UriMapper {
     public static final String EDIT_DEVICE = "/edit";
     public static final String ASSIGN_OWNER = "/assign-owner";
     public static final String DELETE_DEVICE = "/delete";
+    public static final String GET_RANDOM_ID = "/get-random-id";
 
     public static final String MEASUREMENT_BASE = BASE + "/measurement";
     public static final String GET_ALL_MEASUREMENTS_OF_DEVICE = "/get-all-of-device";

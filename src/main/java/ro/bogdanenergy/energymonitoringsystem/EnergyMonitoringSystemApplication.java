@@ -23,19 +23,19 @@ public class EnergyMonitoringSystemApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	CommandLineRunner run(UserService userService, RoleService roleService) {
-		return args ->  {
-			if (roleService.getRoleByName("Admin") == null) {
-				roleService.createRole(new Role("Admin"));
-			}
-			if (roleService.getRoleByName("User") == null) {
-				roleService.createRole(new Role("User"));
-			}
-			if (userService.getUserByUsername("admin") == null) {
-				userService.createAdminUser(new AppUser("admin", "admin", "admin@bogdanenergy.ro", null));
-			}
-		};
-	}
+//	@Bean
+//	CommandLineRunner run(UserService userService, RoleService roleService) {
+//		return args ->  {
+//			if (roleService.getRoleByName("Admin") == null) {
+//				roleService.createRole(new Role("Admin"));
+//			}
+//			if (roleService.getRoleByName("User") == null) {
+//				roleService.createRole(new Role("User"));
+//			}
+//			if (userService.getUserByUsername("admin") == null) {
+//				userService.createAdminUser(new AppUser("admin", "admin", "admin@bogdanenergy.ro", null));
+//			}
+//		};
+//	}
 
 }

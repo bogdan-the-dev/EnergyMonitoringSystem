@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementRequestBodyDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.RabbitmqMeasurementDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.Device;
 import ro.bogdanenergy.energymonitoringsystem.model.Measurement;
 import ro.bogdanenergy.energymonitoringsystem.repository.IMeasurementRepository;
@@ -72,6 +73,13 @@ public class MeasurementService {
             return null;
         }
         return MeasurementDTO.convert(measurement);
+    }
+
+    public void createMeasurementForRabbitMqDTO(RabbitmqMeasurementDTO measurementDTO) {
+        Device device = getDeviceForMeasurement(measurementDTO.getId());
+        Measurement measurement = new Measurement(measurementDTO.getMeasurement(), measurementDTO.getTimestamp(), device);
+        measurementRepository.save(measurement);
+        log.info("Measurement with consumption {} for device with id {} saved successfully", measurementDTO.getMeasurement(), measurementDTO.getId());
     }
 
     public void createMeasurement(MeasurementDTO measurementDTO) throws RuntimeException {
