@@ -1,0 +1,40 @@
+<h3>Create Device</h3>
+<div class="card-content">
+  <div class="col-md-12 offset-md-1">
+    <form [formGroup]="editDeviceForm" (ngSubmit)="onSubmit()" style="width:100%">
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Location
+          </mat-label>
+          <input matInput formControlName="location" required>
+          <mat-error *ngIf="editDeviceForm.controls?.['location'].touched && editDeviceForm.controls?.['location'].invalid">
+            <span *ngIf="editDeviceForm.controls?.['location'].errors?.['required']">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Description
+          </mat-label>
+          <textarea  matInput formControlName="description" required></textarea>
+          <mat-error *ngIf="editDeviceForm.controls?.['description'].touched && editDeviceForm.controls?.['description'].invalid">
+            <span *ngIf="editDeviceForm.controls?.['description'].errors?.['required']">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Maximum Consumption
+          </mat-label>
+          <input type="number"  matInput formControlName="maximumConsumption" required>
+          <mat-error *ngIf="editDeviceForm.controls?.['maximumConsumption'].touched && editDeviceForm.controls?.['maximumConsumption'].invalid">
+            <span *ngIf="editDeviceForm.controls?.['maximumConsumption'].errors?.['required']">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <button mat-raised-button color="primary" type="submit" [disabled]="editDeviceForm.invalid">Edit Device</button>
+      </div>
+    </form>
+  </div>
+</div>

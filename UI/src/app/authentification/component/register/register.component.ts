@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {PasswordMatchValidator} from "../../PasswordMatch.validator";
+import {AuthService} from "../../service/auth.service";
+import {Router} from "@angular/router";
+import {UserRegisterModel} from "../../model/userRegister.model";
 
 @Component({
   selector: 'app-register',
@@ -8,10 +11,10 @@ import {PasswordMatchValidator} from "../../PasswordMatch.validator";
   styleUrls: ['./register.component.less']
 })
 export class RegisterComponent implements OnInit {
-  // @ts-ignore
   registerForm: FormGroup;
 
-  constructor() { }
+  constructor(private authService: AuthService, private router: Router) {
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -34,7 +37,15 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
+    let username = this.registerForm.get('username').value
+    let email = this.registerForm.get('email').value
+    let password = this.registerForm.get('password').value
+    let user: UserRegisterModel = {username: username, password: password, email: email}
+    this.authService.registerUser(user).subscribe(res => {
+      console.log(res)
+      this.router.navigate(['auth','login'])
+
+    })
 
   }
-
 }

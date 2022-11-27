@@ -1,0 +1,58 @@
+<h3>Create Admin Account</h3>
+<div class="card-content">
+  <div class="col-md-12 offset-md-1">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" style="width:100%">
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Username
+          </mat-label>
+          <input matInput formControlName="username" required>
+          <mat-error *ngIf="registerForm.controls?.['username'].touched && registerForm.controls?.['username'].invalid">
+            <span *ngIf="registerForm.controls?.['username'].errors?.['username']">This field is mandatory.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Email
+          </mat-label>
+          <input  matInput formControlName="email" required>
+          <mat-error *ngIf="registerForm.controls?.['email'].touched && registerForm.controls?.['email'].invalid">
+            <span *ngIf="registerForm.controls?.['email'].errors?.['required']">This field is mandatory.</span>
+          </mat-error>
+          <mat-error *ngIf="registerForm.hasError('email') && !registerForm.hasError('required')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Password
+          </mat-label>
+          <input type="password"  matInput formControlName="password" required>
+          <mat-error *ngIf="registerForm.controls?.['password'].touched && registerForm.controls?.['password'].invalid">
+            <span *ngIf="registerForm.controls?.['password'].errors?.['required']">This field is mandatory.</span>
+          </mat-error>
+          <mat-error *ngIf="registerForm.controls?.['password'].touched && registerForm.controls?.['password'].invalid">
+            <span *ngIf="registerForm.get('password').value.length < 8">Password should be at least 8 characters long.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="row">
+        <mat-form-field class="form-field" appearance="outline">
+          <mat-label> Confirm Password
+          </mat-label>
+          <input type="password"  matInput formControlName="confirmPassword" required>
+          <mat-error *ngIf="registerForm.get('password').value !== registerForm.get('confirmPassword').value">
+            <span *ngIf="registerForm.get('password').value !== registerForm.get('confirmPassword').value">Passwords don't match.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="row">
+        <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">Add admin account</button>
+      </div>
+    </form>
+  </div>
+</div>

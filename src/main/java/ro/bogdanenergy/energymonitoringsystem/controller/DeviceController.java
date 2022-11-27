@@ -30,11 +30,7 @@ public class DeviceController {
     @PostMapping(UriMapper.CREATE_DEVICE)
     @Secured("Admin")
     public ResponseEntity createDevice(@RequestBody DeviceDTO deviceDTO) {
-        try {
-            deviceService.createDevice(deviceDTO);
-        } catch (NameNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        deviceService.createDevice(deviceDTO);
         return ResponseEntity.ok("");
     }
 
@@ -63,7 +59,7 @@ public class DeviceController {
 
     @PutMapping(UriMapper.EDIT_DEVICE)
     @Secured("Admin")
-    public ResponseEntity editDevice(DeviceDTO deviceDTO) {
+    public ResponseEntity editDevice(@RequestBody DeviceDTO deviceDTO) {
         try {
             deviceService.editDevice(deviceDTO);
         } catch (RuntimeException e) {
@@ -75,9 +71,9 @@ public class DeviceController {
     @PutMapping(UriMapper.ASSIGN_OWNER)
     @Secured("Admin")
     public ResponseEntity assignDeviceOwner(@RequestParam(name = "device-id") int deviceId,
-                                            @RequestParam(name = "owner-name") int ownerId) {
+                                            @RequestParam(name = "owner-name") String ownerName) {
         try {
-            deviceService.assignOwner(deviceId, ownerId);
+            deviceService.assignOwner(deviceId, ownerName);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

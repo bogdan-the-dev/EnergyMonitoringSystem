@@ -14,6 +14,19 @@ public class DeviceDTO {
     private Double maximumConsumption;
     private String ownerUsername;
 
+    public DeviceDTO(int id, String location, String description, Double maximumConsumption) {
+        this.id = id;
+        this.location = location;
+        this.description = description;
+        this.maximumConsumption = maximumConsumption;
+    }
+
+    public DeviceDTO(String location, String description, Double maximumConsumption) {
+        this.location = location;
+        this.description = description;
+        this.maximumConsumption = maximumConsumption;
+    }
+
     public Device getDevice() {
         return new Device(id, location, description, maximumConsumption, null);
     }
@@ -28,12 +41,15 @@ public class DeviceDTO {
 
     public static DeviceDTO convert(Device device) {
         if (device != null) {
-            return new DeviceDTO(
+            DeviceDTO deviceDTO = new DeviceDTO(
                     device.getId(),
                     device.getLocation(),
                     device.getDescription(),
-                    device.getMaximumConsumption(),
-                    device.getOwner().getUsername());
+                    device.getMaximumConsumption());
+            if(device.getOwner() != null) {
+                deviceDTO.setOwnerUsername(device.getOwner().getUsername());
+            }
+            return deviceDTO;
         }
         else {
             return null;

@@ -28,7 +28,7 @@ public class MeasurementController {
         try {
             return ResponseEntity.ok(measurementService.getAllMeasurementsOfDevice(id));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 
@@ -38,7 +38,7 @@ public class MeasurementController {
         try {
             return ResponseEntity.ok(measurementService.getAllMeasurementsOfUser(id));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 
@@ -48,7 +48,7 @@ public class MeasurementController {
         try {
            return ResponseEntity.ok(measurementService.getMeasurementsOfDeviceFromDay(requestBodyDTO));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 
@@ -69,7 +69,7 @@ public class MeasurementController {
                     .ok()
                     .body(measurementService.getMeasurementsOfDeviceInInterval(startTime, endTIme, id));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 
@@ -80,7 +80,7 @@ public class MeasurementController {
             measurementService.createMeasurement(measurementDTO);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 
@@ -91,7 +91,7 @@ public class MeasurementController {
             measurementService.editMeasurement(measurementDTO);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 
@@ -102,7 +102,7 @@ public class MeasurementController {
             measurementService.deleteMeasurement(id);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
     }
 

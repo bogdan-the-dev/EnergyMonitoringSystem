@@ -30,6 +30,9 @@ public class MeasurementService {
 
     public List<MeasurementDTO> getMeasurementsOfDeviceFromDay(MeasurementRequestBodyDTO requestBodyDTO) {
         Timestamp startTimestamp = new Timestamp(requestBodyDTO.getDay().getTime());
+        startTimestamp.setHours(0);
+        startTimestamp.setMinutes(0);
+        startTimestamp.setSeconds(0);
         Timestamp endTime = new Timestamp(requestBodyDTO.getDay().getTime());
         endTime.setHours(23);
         endTime.setMinutes(59);

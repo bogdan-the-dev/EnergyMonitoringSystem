@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.bogdanenergy.energymonitoringsystem.UriMapper;
+import ro.bogdanenergy.energymonitoringsystem.dto.RegisterUserDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.AppUser;
 import ro.bogdanenergy.energymonitoringsystem.service.UserService;
 
@@ -28,12 +29,12 @@ public class AuthenticationController {
     }
 
     @PutMapping(UriMapper.CHANGE_PASSWORD)
-    public ResponseEntity changePassword(@RequestBody AppUser appUser) {
+    public ResponseEntity changePassword(@RequestBody RegisterUserDTO userDTO) {
         try {
-            userService.changePassword(appUser);
+            userService.changePassword(userDTO);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("");
         }
-        return ResponseEntity.ok("Password changed");
+        return ResponseEntity.ok("");
     }
 }

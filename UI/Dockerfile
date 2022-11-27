@@ -14,3 +14,4 @@ COPY --from=build /app/dist/ui /usr/share/nginx/html
 
 EXPOSE 4200
 EXPOSE 80
+

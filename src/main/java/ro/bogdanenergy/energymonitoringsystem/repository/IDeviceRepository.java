@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface IDeviceRepository extends JpaRepository<Device, Integer> {
 
     Optional<List<Device>> getDevicesByOwnerIdIs(int owner_id);
+    Optional<List<Device>> getDevicesByOwnerUsernameIs(String username);
 
 }
