@@ -28,12 +28,11 @@ public class App
             BufferedReader br = new BufferedReader(new FileReader("sensor.csv"));
             String line;
             int id = 3;
-            //while ((line = br.readLine()) != null) {
-              line = br.readLine();
+            while ((line = br.readLine()) != null) {
                 Measurement measurement = new Measurement(id, Double.parseDouble(line));
                 JSONObject jo = new JSONObject(measurement);
                 channel.basicPublish("", "measurement_queue", null, jo.toString().getBytes());
-          //}
+          }
 //            String message = "blablabla";
   //          channel.basicPublish("", "measurement_queue", null, message.getBytes());
             channel.close();
