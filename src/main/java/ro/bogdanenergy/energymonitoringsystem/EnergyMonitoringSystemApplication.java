@@ -1,5 +1,6 @@
 package ro.bogdanenergy.energymonitoringsystem;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +21,7 @@ import ro.bogdanenergy.energymonitoringsystem.service.UserService;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
+@EnableRabbit
 @SpringBootApplication
 public class EnergyMonitoringSystemApplication {
 
@@ -31,7 +33,7 @@ public class EnergyMonitoringSystemApplication {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
+/*
 	@Bean
 	CommandLineRunner run(UserService userService, RoleService roleService, DeviceService deviceService, MeasurementService measurementService) {
 		return args ->  {
@@ -59,5 +61,5 @@ public class EnergyMonitoringSystemApplication {
 				measurementService.createMeasurement(measurementDTO3);
 			}
 		};
-	}
+	}*/
 }

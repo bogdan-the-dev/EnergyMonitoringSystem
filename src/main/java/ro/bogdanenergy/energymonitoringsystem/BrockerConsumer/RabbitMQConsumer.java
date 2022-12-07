@@ -13,15 +13,12 @@ import ro.bogdanenergy.energymonitoringsystem.service.MeasurementService;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-@Component @Data @Slf4j
+@Component @Slf4j
 public class RabbitMQConsumer {
 
     @Autowired
-    MeasurementService measurementService;
+    private MeasurementService measurementService;
 
-    public RabbitMQConsumer(MeasurementService measurementService) {
-        this.measurementService = measurementService;
-    }
 
     @RabbitListener(queues = "measurement_queue")
     public void receivedMessage(byte[] bytes) {
@@ -29,6 +26,6 @@ public class RabbitMQConsumer {
         JSONObject jo = new JSONObject(s);
         RabbitmqMeasurementDTO measurementDTO = new RabbitmqMeasurementDTO(jo.getInt("id"), jo.getDouble("measurement"), jo.getLong("timestamp"));
         log.info("New measurement received from RabbitMQ: {}", measurementDTO);
-        //measurementService.createMeasurementForRabbitMqDTO(measurementDTO);
+        measurementService.createMeasurementForRabbitMqDTO(measurementDTO);
     }
 }

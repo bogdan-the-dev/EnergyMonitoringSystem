@@ -12,8 +12,11 @@ import ro.bogdanenergy.energymonitoringsystem.repository.IMeasurementRepository;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -27,6 +30,7 @@ public class MeasurementService {
         this.measurementRepository = measurementRepository;
         this.deviceService = deviceService;
     }
+
 
     public List<MeasurementDTO> getMeasurementsOfDeviceFromDay(MeasurementRequestBodyDTO requestBodyDTO) {
         Timestamp startTimestamp = new Timestamp(requestBodyDTO.getDay().getTime());
@@ -81,8 +85,31 @@ public class MeasurementService {
     public void createMeasurementForRabbitMqDTO(RabbitmqMeasurementDTO measurementDTO) {
         Device device = getDeviceForMeasurement(measurementDTO.getId());
         Measurement measurement = new Measurement(measurementDTO.getMeasurement(), measurementDTO.getTimestamp(), device);
-        measurementRepository.save(measurement);
-        log.info("Measurement with consumption {} for device with id {} saved successfully", measurementDTO.getMeasurement(), measurementDTO.getId());
+        log.info("New measurement created {}", measurement);
+        Double maximumAllowedConsumption = measurement.getDevice().getMaximumConsumption();
+
+        Timestamp startTimestamp = new Timestamp(measurement.getTime().getTime());
+        startTimestamp.setMinutes(0);
+        startTimestamp.setSeconds(0);
+        Timestamp endTime = new Timestamp(measurement.getTime().getTime());
+        endTime.setHours(startTimestamp.getHours());
+        endTime.setMinutes(59);
+        endTime.setSeconds(59);
+
+        List<Measurement> measurementsOfHour = measurementRepository.findMeasurementsByTimeBetweenAndDeviceIdIsOrderByTimeAsc(startTimestamp, endTime, measurement.getDevice().getId()).orElse(new ArrayList<>());
+        double currentConsumption = 0;
+        if (!measurementsOfHour.isEmpty()) {
+            currentConsumption = measurement.getConsumption() - measurementsOfHour.get(0).getConsumption();
+        }
+        log.info("Hourly consumption for device with id {} is {}", device.getId(), currentConsumption);
+
+        if (currentConsumption > maximumAllowedConsumption) {
+            log.warn("Device with id {} exceeded the maximum allowed quota", measurement.getDevice().getId());
+            //signal frontend
+        }
+            measurementRepository.save(measurement);
+            log.info("Measurement with consumption {} for device with id {} saved successfully", measurementDTO.getMeasurement(), measurementDTO.getId());
+
     }
 
     public void createMeasurement(MeasurementDTO measurementDTO) throws RuntimeException {
