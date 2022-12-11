@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementRequestBodyDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.RabbitmqMeasurementDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.WebSocketMessageDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.Device;
 import ro.bogdanenergy.energymonitoringsystem.model.Measurement;
 import ro.bogdanenergy.energymonitoringsystem.repository.IMeasurementRepository;
@@ -25,10 +26,13 @@ public class MeasurementService {
     private final IMeasurementRepository measurementRepository;
     private final DeviceService deviceService;
 
+    private final NotificationService notificationService;
+
     @Autowired
-    public MeasurementService(IMeasurementRepository measurementRepository, DeviceService deviceService) {
+    public MeasurementService(IMeasurementRepository measurementRepository, DeviceService deviceService, NotificationService notificationService) {
         this.measurementRepository = measurementRepository;
         this.deviceService = deviceService;
+        this.notificationService = notificationService;
     }
 
 
@@ -105,6 +109,7 @@ public class MeasurementService {
 
         if (currentConsumption > maximumAllowedConsumption) {
             log.warn("Device with id {} exceeded the maximum allowed quota", measurement.getDevice().getId());
+            notificationService.sendMessage(new WebSocketMessageDTO(device.getOwner().getId(), device.getId(), "Consumption exceeded for device ata" + device.getId()));
             //signal frontend
         }
             measurementRepository.save(measurement);

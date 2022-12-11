@@ -1,5 +1,6 @@
 package ro.bogdanenergy.energymonitoringsystem;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -33,7 +34,12 @@ public class EnergyMonitoringSystemApplication {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-/*
+
+	@Bean
+	Queue queue() {
+		return new Queue("measurement_queue", true);
+	}
+
 	@Bean
 	CommandLineRunner run(UserService userService, RoleService roleService, DeviceService deviceService, MeasurementService measurementService) {
 		return args ->  {
@@ -51,15 +57,15 @@ public class EnergyMonitoringSystemApplication {
 				deviceDTO = new DeviceDTO("bucatarie","bec",20.0);
 				deviceService.createDevice(deviceDTO);
 			}
-			Device device = deviceService.getAllDevices().get(0).getDevice();
-			if(measurementService.getAllMeasurementsOfDevice(device.getId()).isEmpty()) {
-				MeasurementDTO measurementDTO1 = new MeasurementDTO(10.5, new Timestamp(2022, 11, 7, 10, 11, 0, 0), device.getId());
-				MeasurementDTO measurementDTO2 = new MeasurementDTO(9.5, new Timestamp(2022, 11, 7, 11, 11, 0, 0), device.getId());
-				MeasurementDTO measurementDTO3 = new MeasurementDTO(19.95, new Timestamp(2022, 11, 7, 11, 48, 0, 0), device.getId());
-				measurementService.createMeasurement(measurementDTO1);
-				measurementService.createMeasurement(measurementDTO2);
-				measurementService.createMeasurement(measurementDTO3);
-			}
 		};
-	}*/
+	}
+	@Bean
+	public Queue myDurableQueue() {
+		// This queue has the following properties:
+		// name: my_durable
+		// durable: true
+		// exclusive: false
+		// auto_delete: false
+		return new Queue("measurement_queue", true, false, false);
+	}
 }

@@ -23,7 +23,7 @@ public class App
         try {
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
-            channel.queueDeclare("measurement_queue", false, false, false, null);
+            channel.queueDeclare("measurement_queue", true, false, false, null);
             BufferedReader br = new BufferedReader(new FileReader("sensor.csv"));
             LocalDateTime date = LocalDateTime.now();
             String line;
