@@ -6,7 +6,7 @@ import lombok.Data;
 @Data @AllArgsConstructor
 public class WebSocketMessageDTO {
 
-    private Integer deviceOwnerId;
+    private String deviceOwnerUsername;
 
     private Integer deviceId;
 

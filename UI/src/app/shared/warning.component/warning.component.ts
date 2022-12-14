@@ -4,13 +4,19 @@ import {AlertifyService} from "../../service/alertifyService";
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 
+export interface message {
+  deviceOwnerUsername: string
+  deviceId: number
+  message: string
+}
 
 @Component({
   selector: 'app-consumption-warning',
   templateUrl: 'warning.component.html',
-  styleUrls: ['warning.component.less']
+  styleUrls: ['warning.component.less'],
+  providers: [AlertifyService]
 })
-export class WarningComponent implements OnInit{
+export class WarningComponent{
 
   private stompClient
 
@@ -32,18 +38,15 @@ export class WarningComponent implements OnInit{
     this.stompClient = Stomp.over(ws)
     let that = this
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe("/chat", (message) => {
+      console.log('Connected')
+      that.stompClient.subscribe("/chat/info", (message) => {
         if(message.body) {
-        console.log(message.body)
+          const msg: message = JSON.parse(message.body)
+          if(sessionStorage.getItem("username") !== undefined && msg.deviceOwnerUsername === sessionStorage.getItem("username")) {
+            that.alertifyService.warning(msg.message)
+          }
         }
       })
     })
   }
-
-  ngOnInit(): void {
-
-  }
-
-
-
 }

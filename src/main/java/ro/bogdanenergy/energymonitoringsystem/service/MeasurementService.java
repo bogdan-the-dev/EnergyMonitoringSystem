@@ -109,7 +109,7 @@ public class MeasurementService {
 
         if (currentConsumption > maximumAllowedConsumption) {
             log.warn("Device with id {} exceeded the maximum allowed quota", measurement.getDevice().getId());
-            notificationService.sendMessage(new WebSocketMessageDTO(device.getOwner().getId(), device.getId(), "Consumption exceeded for device ata" + device.getId()));
+            notificationService.sendMessage(new WebSocketMessageDTO(device.getOwner().getUsername(), device.getId(), "Consumption exceeded for device id " + device.getId()));
             //signal frontend
         }
             measurementRepository.save(measurement);

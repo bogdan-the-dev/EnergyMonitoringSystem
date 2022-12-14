@@ -28,6 +28,7 @@
     "@stomp/ng2-stompjs": "^8.0.0",
     "@stomp/stompjs": "^6.1.2",
     "@types/sockjs-client": "^1.5.1",
+    "alertify": "^0.3.0",
     "alertifyjs": "^1.13.1",
     "angular-sockjs": "^0.1.0",
     "bootstrap": "^3.4.1",

@@ -43,4 +43,6 @@ public class UriMapper {
     public static final String EDIT_MEASUREMENT = "/edit";
     public static final String DELETE_MEASUREMENT = "/delete";
 
+    public static final String WEBSOCKET = "/socket";
+
 }

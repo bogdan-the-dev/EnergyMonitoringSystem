@@ -27,10 +27,11 @@ public class App
             BufferedReader br = new BufferedReader(new FileReader("sensor.csv"));
             LocalDateTime date = LocalDateTime.now();
             String line;
-            int id = 4;
-            while ((line = br.readLine()) != null) {
+            int id = 37900;
+            int i = 0;
+            while ((line = br.readLine()) != null && i < 100) {
 
-
+                i++;
                 Measurement measurement = new Measurement(id, Double.parseDouble(line), date);
                 JSONObject jo = new JSONObject(measurement);
                 channel.basicPublish("", "measurement_queue", null, jo.toString().getBytes());
