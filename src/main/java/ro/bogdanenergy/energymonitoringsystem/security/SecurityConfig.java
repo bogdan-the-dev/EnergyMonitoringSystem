@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }).and();
 //        http.addFilterBefore(corsFilter(), SessionManagementFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeHttpRequests().antMatchers(UriMapper.LOGIN + "/**", UriMapper.REFRESH_TOKEN + "/**", UriMapper.USER_BASE +  UriMapper.CREATE_USER + "/**").permitAll();
+        http.authorizeHttpRequests().antMatchers(UriMapper.LOGIN + "/**", UriMapper.REFRESH_TOKEN + "/**", UriMapper.USER_BASE +  UriMapper.CREATE_USER + "/**", UriMapper.DEVICE_BASE + UriMapper.GET_RANDOM_ID, UriMapper.WEBSOCKET + "/**").permitAll();
         http.authorizeHttpRequests().antMatchers(UriMapper.ADMIN_BASE + "/**").hasRole("Admin");
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);

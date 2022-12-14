@@ -5,14 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementDTO;
 import ro.bogdanenergy.energymonitoringsystem.dto.MeasurementRequestBodyDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.RabbitmqMeasurementDTO;
+import ro.bogdanenergy.energymonitoringsystem.dto.WebSocketMessageDTO;
 import ro.bogdanenergy.energymonitoringsystem.model.Device;
 import ro.bogdanenergy.energymonitoringsystem.model.Measurement;
 import ro.bogdanenergy.energymonitoringsystem.repository.IMeasurementRepository;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -21,11 +26,15 @@ public class MeasurementService {
     private final IMeasurementRepository measurementRepository;
     private final DeviceService deviceService;
 
+    private final NotificationService notificationService;
+
     @Autowired
-    public MeasurementService(IMeasurementRepository measurementRepository, DeviceService deviceService) {
+    public MeasurementService(IMeasurementRepository measurementRepository, DeviceService deviceService, NotificationService notificationService) {
         this.measurementRepository = measurementRepository;
         this.deviceService = deviceService;
+        this.notificationService = notificationService;
     }
+
 
     public List<MeasurementDTO> getMeasurementsOfDeviceFromDay(MeasurementRequestBodyDTO requestBodyDTO) {
         Timestamp startTimestamp = new Timestamp(requestBodyDTO.getDay().getTime());
@@ -75,6 +84,37 @@ public class MeasurementService {
             return null;
         }
         return MeasurementDTO.convert(measurement);
+    }
+
+    public void createMeasurementForRabbitMqDTO(RabbitmqMeasurementDTO measurementDTO) {
+        Device device = getDeviceForMeasurement(measurementDTO.getId());
+        Measurement measurement = new Measurement(measurementDTO.getMeasurement(), measurementDTO.getTimestamp(), device);
+        log.info("New measurement created {}", measurement);
+        Double maximumAllowedConsumption = measurement.getDevice().getMaximumConsumption();
+
+        Timestamp startTimestamp = new Timestamp(measurement.getTime().getTime());
+        startTimestamp.setMinutes(0);
+        startTimestamp.setSeconds(0);
+        Timestamp endTime = new Timestamp(measurement.getTime().getTime());
+        endTime.setHours(startTimestamp.getHours());
+        endTime.setMinutes(59);
+        endTime.setSeconds(59);
+
+        List<Measurement> measurementsOfHour = measurementRepository.findMeasurementsByTimeBetweenAndDeviceIdIsOrderByTimeAsc(startTimestamp, endTime, measurement.getDevice().getId()).orElse(new ArrayList<>());
+        double currentConsumption = 0;
+        if (!measurementsOfHour.isEmpty()) {
+            currentConsumption = measurement.getConsumption() - measurementsOfHour.get(0).getConsumption();
+        }
+        log.info("Hourly consumption for device with id {} is {}", device.getId(), currentConsumption);
+
+        if (currentConsumption > maximumAllowedConsumption) {
+            log.warn("Device with id {} exceeded the maximum allowed quota", measurement.getDevice().getId());
+            notificationService.sendMessage(new WebSocketMessageDTO(device.getOwner().getUsername(), device.getId(), "Consumption exceeded for device id " + device.getId()));
+            //signal frontend
+        }
+            measurementRepository.save(measurement);
+            log.info("Measurement with consumption {} for device with id {} saved successfully", measurementDTO.getMeasurement(), measurementDTO.getId());
+
     }
 
     public void createMeasurement(MeasurementDTO measurementDTO) throws RuntimeException {

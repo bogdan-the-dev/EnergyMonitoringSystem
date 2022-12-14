@@ -32,6 +32,7 @@ import {EditAccountComponent} from "./account/edit-account/edit-account.componen
 import {MatDividerModule} from "@angular/material/divider";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
+import {WarningComponent} from "./shared/warning.component/warning.component";
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {MatButtonModule} from "@angular/material/button";
     DeviceComponent,
     DeviceDetailComponent,
     DropdownDirective,
-    EditAccountComponent
+    EditAccountComponent,
+    WarningComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +67,8 @@ import {MatButtonModule} from "@angular/material/button";
     AdminModule,
     MatDividerModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+
   ],
   providers: [
     {

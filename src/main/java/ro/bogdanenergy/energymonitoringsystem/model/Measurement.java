@@ -12,6 +12,12 @@ import java.sql.Timestamp;
 @Table(name = "measurement")
 public class Measurement {
 
+    public Measurement(Double consumption, Timestamp timestamp, Device device) {
+        this.time = timestamp;
+        this.consumption = consumption;
+        this.device = device;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

@@ -32,6 +32,7 @@ export function SharedReducer(state = initSharedState, action: ActionWithPayload
       newState.isAdmin = false
       newState.loginStatus = null
       newState.isAuthenticated = false
+      sessionStorage.clear()
       return newState
     }
 
@@ -64,6 +65,7 @@ export function SharedReducer(state = initSharedState, action: ActionWithPayload
       const newState = {...state}
       newState.loginUsername = action.payload.username
       newState.isAuthenticated = true
+      sessionStorage['username']=newState.loginUsername
       newState.isAdmin = action.payload.userLevel === 'Admin'
       return newState
     }
