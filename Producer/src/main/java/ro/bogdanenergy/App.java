@@ -21,17 +21,16 @@ public class App
         factory.setUsername("guest");
         factory.setPassword("guest");
         try {
+            BufferedReader b = new BufferedReader(new FileReader("config.cfg"));
+            int id = Integer.parseInt(b.readLine());
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
             channel.queueDeclare("measurement_queue", true, false, false, null);
             BufferedReader br = new BufferedReader(new FileReader("sensor.csv"));
             LocalDateTime date = LocalDateTime.now();
             String line;
-            int id = 37900;
-            int i = 0;
-            while ((line = br.readLine()) != null && i < 100) {
+            while ((line = br.readLine()) != null) {
 
-                i++;
                 Measurement measurement = new Measurement(id, Double.parseDouble(line), date);
                 JSONObject jo = new JSONObject(measurement);
                 channel.basicPublish("", "measurement_queue", null, jo.toString().getBytes());
