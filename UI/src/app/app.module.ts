@@ -8,7 +8,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { LoginComponent } from './authentification/component/login/login.component';
 import { HeaderComponent } from './header/header.component';
 import {AuthComponent} from "./authentification/component/auth/auth.component";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { RegisterComponent } from './authentification/component/register/register.component';
 import { HomeComponent } from './home/home.component';
 import {loginReducerMap} from "./authentification/state-management/login.state";
@@ -33,6 +33,7 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {WarningComponent} from "./shared/warning.component/warning.component";
+import {ChatComponent} from "./shared/chat/chat-component/chat.component";
 
 @NgModule({
   declarations: [
@@ -44,32 +45,34 @@ import {WarningComponent} from "./shared/warning.component/warning.component";
     HomeComponent,
     UserDevicesComponent,
     DeviceComponent,
+    ChatComponent,
     DeviceDetailComponent,
     DropdownDirective,
     EditAccountComponent,
     WarningComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    StoreModule.forRoot(loginReducerMap),
-    StoreModule.forRoot(sharedReducerMap),
-    EffectsModule.forRoot([LoginEffects, SharedEffects]),
-    ReactiveFormsModule,
-    DxChartModule,
-    DxDateBoxModule,
-    BrowserAnimationsModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatInputModule,
-    MatNativeDateModule,
-    AdminModule,
-    MatDividerModule,
-    MatIconModule,
-    MatButtonModule,
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        StoreModule.forRoot(loginReducerMap),
+        StoreModule.forRoot(sharedReducerMap),
+        EffectsModule.forRoot([LoginEffects, SharedEffects]),
+        ReactiveFormsModule,
+        DxChartModule,
+        DxDateBoxModule,
+        BrowserAnimationsModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatInputModule,
+        MatNativeDateModule,
+        AdminModule,
+        MatDividerModule,
+        MatIconModule,
+        MatButtonModule,
+        FormsModule,
 
-  ],
+    ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

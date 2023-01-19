@@ -1,5 +1,5 @@
 
-export const BASE_URI = 'http://localhost:8080/api'
+export const BASE_URI = 'https://localhost:8080/api'
 
 export const AUTH_BASE = BASE_URI + '/auth'
 export const LOGIN = AUTH_BASE + '/login'
@@ -10,6 +10,7 @@ export const GET_MEASUREMENTS_FOR_DEVICE_BY_DAY = MEASUREMENT_BASE + '/get-by-da
 
 export const BASE_USER = BASE_URI +  '/users'
 export const GET_ALL_STANDARD_USERS  = BASE_USER + '/get_all_regular'
+export const GET_ALL_ADMIN_USERS = BASE_USER + '/get_all_admin'
 export const REGISTER_USER = BASE_USER + '/register-user'
 export const EDIT_USER = BASE_USER + '/edit'
 export const DELETE_USER = BASE_USER + '/delete'

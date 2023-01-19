@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,15 +65,19 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Map<String, String> responseObj = new HashMap<>();
         responseObj.put("username", user.getUsername());
         responseObj.put("userLevel", roles.get(0));
-        Cookie access_cookie = new Cookie("access_token", access_token);
-        access_cookie.setHttpOnly(true);
-        access_cookie.setMaxAge(10*60);
-        access_cookie.setPath("/");
+        ResponseCookie access_cookie = ResponseCookie.from("access_token", access_token)
+                .httpOnly(true)
+                .maxAge(10*60)
+                .path("/")
+                .sameSite("None")
+                .secure(true)
+                .build();
+
         Cookie refresh_cookie = new Cookie("refresh_token", refresh_token);
         refresh_cookie.setHttpOnly(true);
         refresh_cookie.setMaxAge(5*60*60);
         refresh_cookie.setPath("/");
-        response.addCookie(access_cookie);
+        response.setHeader(HttpHeaders.SET_COOKIE, access_cookie.toString());
         response.addCookie(refresh_cookie);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), responseObj);

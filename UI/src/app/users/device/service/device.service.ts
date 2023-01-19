@@ -17,7 +17,6 @@ export class DeviceService {
 
   constructor(private http: HttpClient) {
   }
-
   public getDevicesByUser(username): Observable<Device[]> {
     return this.http.get<Device[]>(GET_DEVICES_BY_USER + '?username=' + username)
   }

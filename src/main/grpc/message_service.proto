@@ -1,0 +1,13 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package ro.bogdanenergy.energymonitoringsystem.grpc;
+
+message SupportMessage{
+  string senderUsername = 1;
+  string receiverUsername = 2;
+  string message = 3;
+}
+
+service SendSupportMessage {
+  rpc send(SupportMessage) returns (SupportMessage);
+}

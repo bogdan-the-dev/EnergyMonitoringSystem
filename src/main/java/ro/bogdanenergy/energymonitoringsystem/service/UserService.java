@@ -66,6 +66,15 @@ public class UserService implements UserDetailsService {
         return users;
     }
 
+    public List<UserDTO> getAllAdminUsers() {
+        return this.userRepository
+                .findAppUsersByRoleId(1)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(UserDTO::convert)
+                .collect(Collectors.toList());
+    }
+
     public void createUser(RegisterUserDTO userDTO) throws RuntimeException {
         if(isUsernameTaken(userDTO.getUsername())) {
             log.info("Username already in use");

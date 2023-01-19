@@ -67,6 +67,7 @@ export function SharedReducer(state = initSharedState, action: ActionWithPayload
       newState.isAuthenticated = true
       sessionStorage['username']=newState.loginUsername
       newState.isAdmin = action.payload.userLevel === 'Admin'
+      sessionStorage['isAdmin'] = action.payload.userLevel === 'Admin'
       return newState
     }
 
