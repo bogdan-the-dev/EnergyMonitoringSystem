@@ -19,6 +19,7 @@ import {CreateDeviceComponent} from "./admin/component/create-device/create-devi
 import {EditDeviceComponent} from "./admin/component/edit-device/edit-device.component";
 import {CreateAdminComponent} from "./admin/component/create-admin/create-admin.component";
 import {EditAccountComponent} from "./account/edit-account/edit-account.component";
+import {ChatComponent} from "./shared/chat/chat-component/chat.component";
 
 const appRoutes: Routes = [
   {path: 'auth', component: AuthComponent, children: [
@@ -35,6 +36,7 @@ const appRoutes: Routes = [
       {path: 'edit-device/:id', component: EditDeviceComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]},
       {path: 'create-admin', component: CreateAdminComponent, canActivate: [CanActivateSecuredFunction, CanActivateAdminFunctions]}
     ]},
+  {path: 'chat', component: ChatComponent, canActivate: [CanActivateSecuredFunction]},
   {path: 'account', component: EditAccountComponent, canActivate: [CanActivateSecuredFunction]},
   {path: '', redirectTo:"/home", pathMatch:"full"}
 

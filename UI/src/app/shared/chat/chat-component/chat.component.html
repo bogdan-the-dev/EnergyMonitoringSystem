@@ -1,0 +1,24 @@
+  <h5>Person:</h5>
+  <div *ngFor="let chat of messages | keyvalue">
+    <button #user (click)="selectConversation(chat.key)">{{chat.key}}</button>
+  </div>
+<div *ngIf="selectedUsername !== ''" class="neon-text container box-panel box-shadow" style="width: 50%">
+  <h5>Chat with {{selectedUsername}}</h5>
+  <br>
+  <div #textArea class="text-area">
+    <div *ngFor="let message of selectedChat" class="message">
+    <span>{{message.getUsername()}}</span>
+    <p style="color: black; margin-bottom: 0px">{{message.getMessage()}}</p>
+  </div>
+</div>
+<br>
+<div [hidden]="!isTyping" style="display: flex; flex-direction: row">
+  <span style="font-style: italic">{{selectedUsername}}</span>
+  <span style="width: 5px"></span>
+  <span style="color: white; font-style: italic">is typing...</span>
+</div>
+<br>
+<div style="display: flex; flex-direction: row">
+  <input #text type="text" (keydown)="sendIsTyping()" style="width: 75%"/>
+  <button (click)="onSend(text.value)" style="width: 25%">Send</button>
+</div>

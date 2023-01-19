@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "ChatService";
+
+package greet;
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (stream Message) returns (stream Message);
+  
+  rpc IsTyping (stream Typing) returns (stream Typing);
+
+}
+
+// The request message containing the user's name.
+message Message {
+  string username = 1;
+  string message = 2;
+}
+ message Typing {
+	string username = 1;	
+ }

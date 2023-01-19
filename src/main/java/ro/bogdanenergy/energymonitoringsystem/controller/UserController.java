@@ -33,6 +33,12 @@ public class UserController {
         return this.userService.getAllUsers();
     }
 
+    @GetMapping(UriMapper.GET_ALL_ADMIN_USERS)
+    @ResponseBody
+    private List<UserDTO> getAdminUsers() {
+        return this.userService.getAllAdminUsers();
+    }
+
     @GetMapping(UriMapper.GET_ALL_STANDARD_USERS)
     @ResponseBody
     public List<RegularUserDTO> getRegularUsers() {

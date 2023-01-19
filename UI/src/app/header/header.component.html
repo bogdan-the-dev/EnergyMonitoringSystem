@@ -12,6 +12,7 @@
         <li routerLinkActive="active"><a routerLink="/about">About Us</a></li>
         <li routerLinkActive="active" *ngIf="isAuthenticated && !isAdmin"><a routerLink="/user/devices">Your devices</a></li>
         <li routerLinkActive="active" *ngIf="isAuthenticated && isAdmin"><a routerLink="/admin">Admin Management Portal</a></li>
+        <li routerLinkActive="active" *ngIf="isAuthenticated"><a routerLink="/chat">Chat</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li *ngIf="!isAuthenticated" routerLinkActive="active"><a routerLink="/auth/login">Authentication</a></li>
