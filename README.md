@@ -1,10 +1,13 @@
-# DS2022_30442_Tamba_Bogdan_1&2
+# Energy Monitoring System Website
 <br />
-This repository containts the source code for the assignment 1 and 2(Frontend, Backend, RabbitMQ Producer).
+This project is composed of Java SpringBoot Backend, PostgreSQL database, Angular Front-End, and a ChatService in .NET
 <br />
 <br />
-For the compilation of the backend you should run mvn package in the root folder in terminal
+Each user is able to create a user account, which will see all the devices assigned to him. He is able to see a chart containing the device consumption over a period of one day. Each device has a maximum consumption limit, and when that limit is reached, a warning is displayed to the user. 
 <br />
-For the compilation of the frontend you should run npm run build in the UI folder
+The admin user is able to perform CRUD operations and assign devices and create other admin accounts.
 <br />
-You shouldn't refresh using the browser refresh button, because it will automatically log you out.
+A producer Java app will generate measurements and will send them to the backend via RabbitMq. Before storing them, the hourly consumption will be computed, and if it exceeds the maximum allowed, a warning will be sent to the front-end using WebSocket.
+<br />
+This project also includes a chatting capability, using the gRPC protocol. 
+
